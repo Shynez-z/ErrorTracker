@@ -1,6 +1,7 @@
-export interface Test {
-  id: number;
-  name: string;
+import { IsAlphanumeric, IsEmail, IsNotEmpty } from 'class-validator';
+
+export class TestPost {
+  @IsNotEmpty()
+  id!: number;
 }
 
-export let items: Test[] = [];

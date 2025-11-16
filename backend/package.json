@@ -22,7 +22,17 @@
     "@mikro-orm/core": "^6.6.0",
     "@mikro-orm/postgresql": "^6.6.0",
     "@types/express": "^5.0.5",
+    "class-validator": "^0.14.2",
+    "class-validator-jsonschema": "^5.1.0",
     "express": "^5.1.0",
+    "rimraf": "^6.1.0",
+    "routing-controllers": "^0.11.3",
+    "routing-controllers-openapi": "^5.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "typedi": "^0.10.0",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/swagger-ui-express": "^4.1.8"
   }
 }

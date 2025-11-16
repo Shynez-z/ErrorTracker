@@ -1,15 +1,19 @@
 import {Options, ReflectMetadataProvider } from '@mikro-orm/core';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import path from 'path';
-import config from '../config/config';
+import { fileURLToPath } from 'url';
+import config from '../config/config.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const options: Options<PostgreSqlDriver> = {
   metadataProvider: ReflectMetadataProvider,
-  entities: ['./dist/src/database/entities'], // path to our JS entities (dist), relative to `baseDir`
+  entities: [path.join(__dirname, './entities/**/*.js')], // path to our JS entities (dist), relative to `baseDir`
   dbName: config.postgres_db,
   password: config.postgres_password,
   user: config.postgres_user,
+  schema: 'public',
   host: config.postgres_host,
   port: config.postgres_port,
   migrations: {

@@ -10,6 +10,7 @@ interface Config {
   postgres_password: string
   postgres_port: number
   postgres_user: string
+  api_route_prefix: string
 }
 
 
@@ -21,6 +22,7 @@ const config: Config = {
   postgres_password: process.env.POSTGRES_PASSWORD || '',
   postgres_port: Number(process.env.POSTGRES_PORT) || 5432,
   postgres_user: process.env.POSTGRES_USER || '',
+  api_route_prefix: process.env.API_ROUTE_PREFIX || '/api/v1',
 };
 
 export default config;
