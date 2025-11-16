@@ -11,6 +11,7 @@ interface Config {
   postgres_port: number
   postgres_user: string
   api_route_prefix: string
+  swagger_route: string
 }
 
 
@@ -23,6 +24,7 @@ const config: Config = {
   postgres_port: Number(process.env.POSTGRES_PORT) || 5432,
   postgres_user: process.env.POSTGRES_USER || '',
   api_route_prefix: process.env.API_ROUTE_PREFIX || '/api/v1',
+  swagger_route: process.env.SWAGGER_ROUTE || '/swagger',
 };
 
 export default config;

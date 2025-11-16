@@ -1,7 +1,9 @@
-import { IsAlphanumeric, IsEmail, IsNotEmpty } from 'class-validator';
+import { Property } from '@mikro-orm/core';
+import { IsAlpha, IsAlphanumeric, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class TestPost {
-  @IsNotEmpty()
-  id!: number;
+    @Property()
+    @IsAlpha()
+    name!: string;
 }
 

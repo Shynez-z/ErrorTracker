@@ -6,6 +6,7 @@ import path from 'path';
 import { TestController } from './controllers/testController.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSchema from './initializers/swagger.js';
+import config from './config/config.js';
 
 //import itemRoutes from './routes/itemRoutes';
 //import { errorHandler } from './middlewares/errorHandler';
@@ -18,9 +19,9 @@ app = useExpressServer(app, {
   routePrefix: '/api/v1',
 });
 
-if (process.env.SWAGGER_ROUTE) {
-  app.use(process.env.SWAGGER_ROUTE, swaggerUi.serve);
-  app.get(process.env.SWAGGER_ROUTE, swaggerUi.setup(swaggerSchema));
+if (config.swagger_route) {
+  app.use(config.swagger_route, swaggerUi.serve);
+  app.get(config.swagger_route, swaggerUi.setup(swaggerSchema));
 }
 // Routes
 //app.use('/api/items', itemRoutes);
