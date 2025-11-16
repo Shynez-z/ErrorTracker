@@ -7,6 +7,7 @@ import { TestController } from './controllers/test-controller.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSchema from './initializers/swagger.js';
 import config from './config/config.js';
+import cors from 'cors';
 
 //import itemRoutes from './routes/itemRoutes';
 //import { errorHandler } from './middlewares/errorHandler';
@@ -14,10 +15,17 @@ useContainer(Container);
 let app = express();
 
 //app.use(express.json());
+const options: cors.CorsOptions = {
+  origin: '*'
+};
+app.use(cors(options));
+
 app = useExpressServer(app, {
   controllers: [TestController],
   routePrefix: '/api/v1',
+  
 });
+
 
 if (config.swagger_route) {
   app.use(config.swagger_route, swaggerUi.serve);
