@@ -3,7 +3,7 @@ import express from 'express';
 import { useContainer, useExpressServer } from 'routing-controllers';
 import { Container } from 'typedi';
 import path from 'path';
-import { TestController } from './controllers/testController.js';
+import { TestController } from './controllers/test-controller.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSchema from './initializers/swagger.js';
 import config from './config/config.js';

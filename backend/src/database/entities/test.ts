@@ -1,6 +1,6 @@
 import { Entity, Property, Unique } from '@mikro-orm/core';
 
-import { BaseEntity } from '../base-entity/baseEntity.js';
+import { BaseEntity } from '../base-entity/base-entity.js';
 
 import { IsAlpha, IsEmail } from 'class-validator';
 
