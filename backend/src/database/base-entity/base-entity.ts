@@ -6,6 +6,7 @@ export abstract class BaseEntity {
     @IsNumber()
     id!: number;
 
+    @Property()
     createdAt: Date = new Date();
     
     @Property({ onUpdate: () => new Date() })

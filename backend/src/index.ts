@@ -1,22 +1,43 @@
-import { MikroORM } from '@mikro-orm/core';
+import { Container } from 'typedi';
 import app from './app.js';
-import config from './config/config.js';
-import express from 'express';
-import initDb from './database/mikro-orm.js';
-import swaggerUi from 'swagger-ui-express';
-import swaggerSchema from './initializers/swagger.js';
-import { DI } from './di-container.js';
+import { config } from './config/config.js';
+import { DatabaseService } from './services/database.service.js';
 
-// if (process.env.SWAGGER_ROUTE) {
-//   app.use(`${process.env.SWAGGER_ROUTE}`, swaggerUi.serve);
-//   app.get(`${process.env.SWAGGER_ROUTE}`, swaggerUi.setup(swaggerSchema));
-// }
-
-const port = parseInt(process.env.PORT ?? '3000');
+const port = config.port;
 
 export const init = (async () => {
-  const orm = await initDb();
-  app.listen(port);
-  DI.orm = orm;
-  DI.server = app;
+  try {
+    // Initialize database
+    const databaseService = Container.get(DatabaseService);
+    await databaseService.initialize();
+
+    console.log('✅ Database connected successfully');
+    console.log(`📊 Database: ${config.database.name}`);
+    console.log(`🏠 Host: ${config.database.host}:${config.database.port}`);
+
+    // Start server
+    app.listen(port, () => {
+      console.log(`🚀 Server running on port ${port}`);
+      console.log(`📝 Environment: ${config.nodeEnv}`);
+      console.log(`📚 API Documentation: http://localhost:${port}${config.api.swaggerRoute}`);
+      console.log(`🔗 API Base URL: http://localhost:${port}${config.api.routePrefix}`);
+    });
+
+    // Graceful shutdown
+    process.on('SIGTERM', async () => {
+      console.log('SIGTERM signal received: closing HTTP server');
+      await databaseService.close();
+      process.exit(0);
+    });
+
+    process.on('SIGINT', async () => {
+      console.log('SIGINT signal received: closing HTTP server');
+      await databaseService.close();
+      process.exit(0);
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
 })();

@@ -1,30 +1,48 @@
-import dotenv from 'dotenv';
+import { config as dotenvConfig } from 'dotenv';
+import { z } from 'zod';
 
-dotenv.config();
+dotenvConfig();
 
-interface Config {
-  port: number;
-  nodeEnv: string;
-  postgres_db: string
-  postgres_host: string
-  postgres_password: string
-  postgres_port: number
-  postgres_user: string
-  api_route_prefix: string
-  swagger_route: string
-}
+const configSchema = z.object({
+  port: z.coerce.number().default(3000),
+  nodeEnv: z.enum(['development', 'production', 'test']).default('development'),
+  database: z.object({
+    host: z.string().min(1, 'Database host is required'),
+    port: z.coerce.number().default(5432),
+    name: z.string().min(1, 'Database name is required'),
+    user: z.string().min(1, 'Database user is required'),
+    password: z.string().min(1, 'Database password is required'),
+  }),
+  api: z.object({
+    routePrefix: z.string().default('/api/v1'),
+    swaggerRoute: z.string().default('/swagger'),
+  }),
+  cors: z.object({
+    origin: z.string().or(z.array(z.string())).default('http://localhost:4200'),
+  }),
+});
 
-
-const config: Config = {
-  port: Number(process.env.PORT) || 3000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  postgres_db: process.env.POSTGRES_DB || '',
-  postgres_host: process.env.POSTGRES_HOST || '',
-  postgres_password: process.env.POSTGRES_PASSWORD || '',
-  postgres_port: Number(process.env.POSTGRES_PORT) || 5432,
-  postgres_user: process.env.POSTGRES_USER || '',
-  api_route_prefix: process.env.API_ROUTE_PREFIX || '/api/v1',
-  swagger_route: process.env.SWAGGER_ROUTE || '/swagger',
+const rawConfig = {
+  port: process.env.PORT,
+  nodeEnv: process.env.NODE_ENV,
+  database: {
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    name: process.env.POSTGRES_DB,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+  },
+  api: {
+    routePrefix: process.env.API_ROUTE_PREFIX,
+    swaggerRoute: process.env.SWAGGER_ROUTE,
+  },
+  cors: {
+    origin: process.env.CORS_ORIGIN,
+  },
 };
 
-export default config;
+// Validate and parse config - will throw if validation fails
+export const config = configSchema.parse(rawConfig);
+
+// Type-safe config export
+export type Config = z.infer<typeof configSchema>;
