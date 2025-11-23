@@ -1,0 +1,55 @@
+<div class="container">
+  <h1>Test Management</h1>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Create New Test -->
+  <div class="create-section">
+    <h2>Create New Test</h2>
+    <div class="form-group">
+      <input 
+        type="text" 
+        [(ngModel)]="newTestName" 
+        placeholder="Enter test name"
+        (keyup.enter)="createTest()"
+        class="input-field"
+      />
+      <button (click)="createTest()" class="btn btn-primary">
+        Create Test
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    Loading tests...
+  </div>
+
+  <!-- Tests List -->
+  <div *ngIf="!loading" class="tests-section">
+    <h2>Tests ({{ tests.length }})</h2>
+    
+    <div *ngIf="tests.length === 0" class="empty-state">
+      No tests found. Create one above!
+    </div>
+
+    <div class="tests-grid">
+      <div *ngFor="let test of tests" class="test-card">
+        <div class="test-header">
+          <h3>{{ test.name }}</h3>
+          <button (click)="deleteTest(test.id)" class="btn btn-danger">
+            Delete
+          </button>
+        </div>
+        <div class="test-meta">
+          <p><strong>ID:</strong> {{ test.id }}</p>
+          <p><strong>Created:</strong> {{ test.createdAt | date:'short' }}</p>
+          <p><strong>Updated:</strong> {{ test.updatedAt | date:'short' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
