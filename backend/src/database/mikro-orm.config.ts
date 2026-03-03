@@ -9,18 +9,22 @@ const __dirname = path.dirname(__filename);
 
 const options: Options<PostgreSqlDriver> = {
   driver: PostgreSqlDriver,
+
   metadataProvider: ReflectMetadataProvider,
-  entities: [path.join(__dirname, './entities/**/*.js')], // path to our JS entities (dist), relative to `baseDir`
-  dbName: config.database.name,
-  password: config.database.password,
-  user: config.database.user,
+
+  entities: [path.join(__dirname, './entities/**/*.js')],
+
   schema: 'public',
-  host: config.database.host,
-  port: config.database.port,
+
+  clientUrl: config.database.url, // ⭐ IMPORTANT CLOUD PATTERN
+
   migrations: {
     tableName: 'mikro_orm_migrations',
+
     allOrNothing: true,
+
     path: path.join(process.cwd(), 'dist/src/database/migrations'),
+
     pathTs: path.join(process.cwd(), 'src/database/migrations'),
   },
 };
