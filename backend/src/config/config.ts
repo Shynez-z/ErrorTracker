@@ -1,15 +1,17 @@
 import { config as dotenvConfig } from 'dotenv';
 import { z } from 'zod';
 
-dotenvConfig();
+if (process.env.NODE_ENV !== 'production') {
+    dotenvConfig();
+}
 
 const configSchema = z.object({
   port: z.coerce.number().default(8080),
   nodeEnv: z.enum(['development','production','test']).default('production'),
 
   database: z.object({
-    url: z.string()
-  }),
+  url: z.string().min(1)
+}).required(),
 
   api: z.object({
     routePrefix: z.string().default('/api/v1'),
