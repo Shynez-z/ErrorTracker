@@ -4,8 +4,8 @@ import { z } from 'zod';
 dotenvConfig();
 
 const configSchema = z.object({
-  port: z.coerce.number().default(3000),
-  nodeEnv: z.enum(['development', 'production', 'test']).default('development'),
+  port: z.coerce.number().default(8080),
+  nodeEnv: z.enum(['development', 'production', 'test']).default('production'),
   database: z.object({
     host: z.string().min(1, 'Database host is required'),
     port: z.coerce.number().default(5432),
@@ -18,7 +18,7 @@ const configSchema = z.object({
     swaggerRoute: z.string().default('/swagger'),
   }),
   cors: z.object({
-    origin: z.string().or(z.array(z.string())).default('http://localhost:4200'),
+    origin: z.string().or(z.array(z.string())).default('*'),
   }),
 });
 
@@ -37,7 +37,7 @@ const rawConfig = {
     swaggerRoute: process.env.SWAGGER_ROUTE,
   },
   cors: {
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN || '*',
   },
 };
 
