@@ -1,42 +1,51 @@
-# ---------- Stage 1: Build Backend ----------
-FROM node:20-alpine AS backend-builder
+# ===============================
+# Builder Stage (Backend + Frontend)
+# ===============================
 
-WORKDIR /ERRORTRACKER/backend
+FROM node:20-alpine AS builder
 
-COPY backend/package*.json ./
-RUN npm install
+WORKDIR /app
 
-COPY backend/ .
+# ---------- Backend Build ----------
+COPY backend/package*.json ./backend/
+RUN cd backend && npm install
 
-RUN npm run build
+COPY backend ./backend
+RUN cd backend && npm run build
 
-# ---------- Stage 2: Build Frontend ----------
-FROM node:20-alpine AS frontend-builder
+# ---------- Frontend Build ----------
+COPY frontend/package*.json ./frontend/
+RUN cd frontend && npm install
 
-WORKDIR /ERRORTRACKER/frontend
+COPY frontend ./frontend
+RUN cd frontend && npm run build -- --configuration production
 
-COPY frontend/package*.json ./
-RUN npm install
 
-COPY frontend/ .
+# ===============================
+# Runtime Stage
+# ===============================
 
-RUN npm run build -- --configuration production
-
-# ---------- Final Runtime Image ----------
 FROM node:20-alpine
 
 WORKDIR /app
 
 # Copy backend compiled code
-COPY --from=backend-builder /ERRORTRACKER/backend/dist ./backend/dist
-COPY --from=backend-builder /ERRORTRACKER/backend/package*.json ./backend/
+COPY --from=builder /app/backend/dist ./dist
 
-WORKDIR /app/backend
+# Copy backend package.json for runtime deps
+COPY --from=builder /app/backend/package*.json ./
+
 RUN npm install --production
 
-# Copy Angular build
-COPY --from=frontend-builder /ERRORTRACKER/frontend/dist ./public
+# Copy Angular production build
+COPY --from=builder /app/backend/public ./public
+
+# ===============================
+# Environment + Runtime
+# ===============================
 
 EXPOSE 8080
 
-CMD ["node", "dist/server.js"]
+ENV NODE_ENV=production
+
+CMD ["node", "dist/index.js"]
