@@ -6,12 +6,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const configSchema = z.object({
+
   port: z.coerce.number().default(8080),
+
   nodeEnv: z.enum(['development','production','test']).default('production'),
 
-  database: {
-  url: process.env.DATABASE_URL || ""
-  },
+  database: z.object({
+    url: z.string().min(1, "DATABASE_URL is required")
+  }),
 
   api: z.object({
     routePrefix: z.string().default('/api/v1'),
@@ -21,6 +23,7 @@ const configSchema = z.object({
   cors: z.object({
     origin: z.string().or(z.array(z.string())).default('*'),
   }),
+
 });
 
 const rawConfig = {
