@@ -5,29 +5,27 @@ import { DatabaseService } from './services/database.service.js';
 const port = config.port;
 export const init = (async () => {
     try {
-        // Initialize database
         const databaseService = Container.get(DatabaseService);
-        await databaseService.initialize();
+        // ⭐ Database retry pattern (cloud safe)
+        const MAX_RETRIES = 5;
+        for (let i = 0; i < MAX_RETRIES; i++) {
+            try {
+                await databaseService.initialize();
+                break;
+            }
+            catch (err) {
+                console.log(`DB connection retry ${i + 1}`);
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
         console.log('✅ Database connected successfully');
-        console.log(`📊 Database: ${config.database.name}`);
-        console.log(`🏠 Host: ${config.database.host}:${config.database.port}`);
-        // Start server
-        app.listen(port, () => {
+        // ⭐ Important for Docker networking
+        app.listen(port, "0.0.0.0", () => {
+            const baseUrl = process.env.PUBLIC_URL || `http://localhost:${port}`;
             console.log(`🚀 Server running on port ${port}`);
             console.log(`📝 Environment: ${config.nodeEnv}`);
-            console.log(`📚 API Documentation: http://localhost:${port}${config.api.swaggerRoute}`);
-            console.log(`🔗 API Base URL: http://localhost:${port}${config.api.routePrefix}`);
-        });
-        // Graceful shutdown
-        process.on('SIGTERM', async () => {
-            console.log('SIGTERM signal received: closing HTTP server');
-            await databaseService.close();
-            process.exit(0);
-        });
-        process.on('SIGINT', async () => {
-            console.log('SIGINT signal received: closing HTTP server');
-            await databaseService.close();
-            process.exit(0);
+            console.log(`📚 API Docs: ${baseUrl}${config.api.swaggerRoute}`);
+            console.log(`🔗 Base API: ${baseUrl}${config.api.routePrefix}`);
         });
     }
     catch (error) {
