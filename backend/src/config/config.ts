@@ -9,9 +9,9 @@ const configSchema = z.object({
   port: z.coerce.number().default(8080),
   nodeEnv: z.enum(['development','production','test']).default('production'),
 
-  database: z.object({
-  url: z.string().min(1)
-}).required(),
+  database: {
+  url: process.env.DATABASE_URL || ""
+  },
 
   api: z.object({
     routePrefix: z.string().default('/api/v1'),

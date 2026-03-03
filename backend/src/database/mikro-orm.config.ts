@@ -16,7 +16,7 @@ const options: Options<PostgreSqlDriver> = {
 
   schema: 'public',
 
-  clientUrl: config.database.url, // ⭐ IMPORTANT CLOUD PATTERN
+  clientUrl: "postgresql://shynez:0qCHzvqqPbGJXHYrOVGfU34HVNDnU8bh@dpg-d6jkfh4r85hc739h3qmg-a.frankfurt-postgres.render.com/pjme01", // ⭐ IMPORTANT CLOUD PATTERN
 
   migrations: {
     tableName: 'mikro_orm_migrations',
